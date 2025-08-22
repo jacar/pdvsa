@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Sistema Biométrico de Reporte de Viajes",
+  "description": "Una aplicación para registrar pasajeros mediante un lector biométrico y generar automáticamente un reporte de viaje profesional al finalizar.",
+  "requestFramePermissions": []
+}
