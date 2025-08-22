@@ -13,9 +13,8 @@ const App: React.FC = () => {
         // 1. Convierte UserData a Passenger para el formato del reporte
         const reportPassenger: Passenger = {
             name: passenger.fullName.toUpperCase(),
-            // Estos campos no están en UserData, se podrían añadir al servicio biométrico
             cedula: passenger.biometricId || 'N/A', // Usando biometricId como placeholder
-            department: 'N/A',
+            department: passenger.department || 'N/A', // Añadido el campo de gerencia
             time: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit', hour12: false })
         };
 

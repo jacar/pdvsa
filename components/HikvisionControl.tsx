@@ -46,6 +46,21 @@ const BiometricControl: React.FC<BiometricControlProps> = ({ onScanSuccess, onSc
     biometricService.startScan();
   }, [onScanReset, scanStatus]);
 
+  const handleDemoScan = useCallback(() => {
+    const mockPassenger: UserData = {
+        fullName: 'Anelisa Josefina Huerta Delgado',
+        email: 'ahuerta@example.com',
+        phone: '0414-1234567',
+        address: 'Av. Principal, Edif. A, Apto 1',
+        emergencyContactName: 'Carlos Huerta',
+        emergencyContactPhone: '0412-7654321',
+        biometricId: '14475713',
+        department: 'INGENIERIA DE PETROLEO',
+    };
+    onScanSuccess(mockPassenger);
+    setScanStatus(BiometricStatus.SUCCESS);
+  }, [onScanSuccess]);
+
   const getStatusContent = () => {
     // Prioridad a los mensajes de conexión
     switch (connectionStatus) {
@@ -63,6 +78,7 @@ const BiometricControl: React.FC<BiometricControlProps> = ({ onScanSuccess, onSc
           buttonText: 'Reintentar Conexión',
           buttonDisabled: false,
           buttonAction: () => biometricService.connect(),
+          showDemoButton: true,
         };
       case ConnectionStatus.DISCONNECTED:
          return {
@@ -108,7 +124,7 @@ const BiometricControl: React.FC<BiometricControlProps> = ({ onScanSuccess, onSc
     }
   };
 
-  const { iconColor, text, buttonText, buttonDisabled, buttonAction } = getStatusContent();
+  const { iconColor, text, buttonText, buttonDisabled, buttonAction, showDemoButton } = getStatusContent();
 
   return (
     <div className="mt-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 flex flex-col items-center text-center">
@@ -120,13 +136,23 @@ const BiometricControl: React.FC<BiometricControlProps> = ({ onScanSuccess, onSc
       }`}>
         {text}
       </p>
-      <button
-        onClick={buttonAction || handleScan}
-        disabled={buttonDisabled}
-        className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {buttonText}
-      </button>
+      <div className="flex flex-col items-center">
+        <button
+          onClick={buttonAction || handleScan}
+          disabled={buttonDisabled}
+          className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          {buttonText}
+        </button>
+        {showDemoButton && (
+          <button
+            onClick={handleDemoScan}
+            className="mt-2 px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75 transition duration-200"
+          >
+            Usar Modo de Demostración
+          </button>
+        )}
+      </div>
     </div>
   );
 };

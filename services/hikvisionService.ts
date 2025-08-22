@@ -13,6 +13,8 @@ class BiometricService {
   private dataListeners: Set<DataListener> = new Set();
   private errorListeners: Set<ErrorListener> = new Set();
   private connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
+  private connectionTimeout: number | null = null;
+
 
   private constructor() {
     // El constructor es privado para el patrón Singleton.
@@ -36,10 +38,23 @@ class BiometricService {
       return;
     }
 
+    if (this.connectionTimeout) {
+      clearTimeout(this.connectionTimeout);
+    }
+    
     this.setStatus(ConnectionStatus.CONNECTING);
+    
+    this.connectionTimeout = window.setTimeout(() => {
+      if (this.ws && this.ws.readyState !== WebSocket.OPEN) {
+        console.error("Timeout de conexión WebSocket. El servicio no respondió a tiempo.");
+        this.ws.close();
+      }
+    }, 3000); // 3-second timeout
+
     this.ws = new WebSocket(WEBSOCKET_URL);
 
     this.ws.onopen = () => {
+      if (this.connectionTimeout) clearTimeout(this.connectionTimeout);
       console.log("Conectado al servicio biométrico local.");
       this.setStatus(ConnectionStatus.CONNECTED);
     };
@@ -61,12 +76,15 @@ class BiometricService {
     };
 
     this.ws.onerror = (event) => {
-      console.error("Error en la conexión WebSocket con el servicio biométrico:", event);
+      if (this.connectionTimeout) clearTimeout(this.connectionTimeout);
+      console.error("Error en la conexión WebSocket. Verifique que el servicio en 'ws://localhost:12345' esté en ejecución.");
       this.setStatus(ConnectionStatus.ERROR);
     };
 
     this.ws.onclose = () => {
+      if (this.connectionTimeout) clearTimeout(this.connectionTimeout);
       console.log("Desconectado del servicio biométrico local.");
+      // Si el estado ya es ERROR (por timeout o error explícito), no lo cambies a DISCONNECTED.
       if (this.connectionStatus !== ConnectionStatus.ERROR) {
           this.setStatus(ConnectionStatus.DISCONNECTED);
       }

@@ -29,6 +29,7 @@ export interface UserData {
   address: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
+  department?: string;
   biometricId?: string;
 }
 

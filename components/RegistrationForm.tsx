@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { UserData } from '../types';
 import BiometricControl from './HikvisionControl';
-import { UserIcon, EmailIcon, PhoneIcon, HomeIcon, ShieldIcon } from './icons/Icons';
+import { UserIcon, EmailIcon, PhoneIcon, HomeIcon, ShieldIcon, BriefcaseIcon } from './icons/Icons';
 
 interface PreRouteScreenProps {
   onStartRoute: (userData: UserData) => void;
@@ -44,11 +44,11 @@ const PreRouteScreen: React.FC<PreRouteScreenProps> = ({ onStartRoute }) => {
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 text-center">Pasajero Identificado</h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
               <InfoDisplayRow label="Nombre Completo" value={passengerData.fullName} icon={<UserIcon />} />
-              <InfoDisplayRow label="Teléfono" value={passengerData.phone} icon={<PhoneIcon />} />
+              {passengerData.department && <InfoDisplayRow label="Gerencia" value={passengerData.department} icon={<BriefcaseIcon />} />}
               <InfoDisplayRow label="Correo Electrónico" value={passengerData.email} icon={<EmailIcon />} />
+              <InfoDisplayRow label="Teléfono" value={passengerData.phone} icon={<PhoneIcon />} />
               <InfoDisplayRow label="Dirección" value={passengerData.address} icon={<HomeIcon />} />
-              <InfoDisplayRow label="Contacto de Emergencia" value={passengerData.emergencyContactName} icon={<ShieldIcon />} />
-              <InfoDisplayRow label="Teléfono de Emergencia" value={passengerData.emergencyContactPhone} icon={<PhoneIcon />} />
+              <InfoDisplayRow label="Contacto de Emergencia" value={`${passengerData.emergencyContactName} (${passengerData.emergencyContactPhone})`} icon={<ShieldIcon />} />
           </div>
           <div className="pt-6">
             <button
